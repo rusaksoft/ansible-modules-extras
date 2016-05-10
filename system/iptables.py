@@ -266,6 +266,11 @@ options:
     description:
       - "Specifies the error packet type to return while rejecting."
     required: false
+  setup:
+    description:
+      - "Specifies setup method: can be 'append' (default) or 'prepend'"
+    required: false
+    default: append
 '''
 
 EXAMPLES = '''
@@ -360,7 +365,12 @@ def check_present(iptables_path, module, params):
 
 
 def append_rule(iptables_path, module, params):
-    cmd = push_arguments(iptables_path, '-A', params)
+    # Append by default
+    arg = '-A'
+    if params['setup'] == 'prepend':
+        arg = '-I'
+
+    cmd = push_arguments(iptables_path, arg, params)
     module.run_command(cmd, check_rc=True)
 
 
@@ -399,6 +409,7 @@ def main():
             limit_burst=dict(required=False, default=None, type='str'),
             uid_owner=dict(required=False, default=None, type='str'),
             reject_with=dict(required=False, default=None, type='str'),
+            setup=dict(required=False,default='append',type='str'),
         ),
         mutually_exclusive=(
             ['set_dscp_mark', 'set_dscp_mark_class'],
