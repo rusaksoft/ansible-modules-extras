@@ -267,6 +267,7 @@ options:
       - "Specifies the error packet type to return while rejecting."
     required: false
   setup:
+    version_added: "2.2"
     description:
       - "Specifies setup method: can be 'append' (default) or 'prepend'"
     required: false
