@@ -266,6 +266,14 @@ options:
     description:
       - "Specifies the error packet type to return while rejecting."
     required: false
+  ctstatus:
+    version_added: "2.2"
+    description:
+      - "ctstatus is a list of the connection states to match in the conntrack module.
+        Do not confuse with 'ctstate': https://www.frozentux.net/iptables-tutorial/iptables-tutorial.html#CONNTRACKMATCH
+        Possible statuses are: 'NONE', 'EXPECTED', 'SEEN_REPLY', 'ASSURED'"
+    required: false
+    default: []
 '''
 
 EXAMPLES = '''
@@ -342,6 +350,8 @@ def construct_rule(params):
     append_param(rule, params['uid_owner'], '--uid-owner', False)
     append_jump(rule, params['reject_with'], 'REJECT')
     append_param(rule, params['reject_with'], '--reject-with', False)
+    append_match(rule, params['ctstatus'],"conntrack")
+    append_csv(rule, params['ctstatus'], '--ctstatus', False)
     return rule
 
 
@@ -399,6 +409,7 @@ def main():
             limit_burst=dict(required=False, default=None, type='str'),
             uid_owner=dict(required=False, default=None, type='str'),
             reject_with=dict(required=False, default=None, type='str'),
+            ctstatus=dict(required=False, default=[], type='list'),
         ),
         mutually_exclusive=(
             ['set_dscp_mark', 'set_dscp_mark_class'],
