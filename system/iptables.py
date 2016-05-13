@@ -272,6 +272,11 @@ options:
       - "Specifies the position where rule will be added: can be 'append' (default), 'prepend' or line number"
     required: false
     default: append
+  icmp_type:
+    version_added: "2.2"
+    description:
+      - "This allows specification of the ICMP type, which can be a numeric ICMP type, type/code pair, or one of the ICMP type names shown by the command 'iptables -p icmp -h'"
+    required: false
 '''
 
 EXAMPLES = '''
@@ -348,6 +353,7 @@ def construct_rule(params):
     append_param(rule, params['uid_owner'], '--uid-owner', False)
     append_jump(rule, params['reject_with'], 'REJECT')
     append_param(rule, params['reject_with'], '--reject-with', False)
+    append_param(rule, params['icmp_type'], '--icmp_type', False)
     return rule
 
 
@@ -418,6 +424,7 @@ def main():
             uid_owner=dict(required=False, default=None, type='str'),
             reject_with=dict(required=False, default=None, type='str'),
             position=dict(required=False,default='append',type='str'),
+            icmp_type=dict(required=False, default=None, type='str'),
         ),
         mutually_exclusive=(
             ['set_dscp_mark', 'set_dscp_mark_class'],
