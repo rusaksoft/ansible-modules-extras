@@ -351,7 +351,7 @@ def construct_rule(params):
     append_jump(rule, params['reject_with'], 'REJECT')
     append_param(rule, params['reject_with'], '--reject-with', False)
     append_match(rule, params['ctstatus'],"conntrack")
-    append_csv(rule, params['ctstatus'], '--ctstatus', False)
+    append_csv(rule, params['ctstatus'], '--ctstatus')
     return rule
 
 
