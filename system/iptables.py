@@ -363,7 +363,7 @@ def construct_rule(params):
     append_param(rule, params['reject_with'], '--reject-with', False)
     append_param(rule, params['icmp_type'], '--icmp_type', False)
     append_match(rule, params['ctstatus'],"conntrack")
-    append_csv(rule, params['ctstatus'], '--ctstatus', False)
+    append_csv(rule, params['ctstatus'], '--ctstatus')
     return rule
 
 
