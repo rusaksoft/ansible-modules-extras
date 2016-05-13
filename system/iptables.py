@@ -277,6 +277,14 @@ options:
     description:
       - "This allows specification of the ICMP type, which can be a numeric ICMP type, type/code pair, or one of the ICMP type names shown by the command 'iptables -p icmp -h'"
     required: false
+  ctstatus:
+    version_added: "2.2"
+    description:
+      - "ctstatus is a list of the connection states to match in the conntrack module.
+        Do not confuse with 'ctstate': https://www.frozentux.net/iptables-tutorial/iptables-tutorial.html#CONNTRACKMATCH
+        Possible statuses are: 'NONE', 'EXPECTED', 'SEEN_REPLY', 'ASSURED'"
+    required: false
+    default: []
 '''
 
 EXAMPLES = '''
@@ -353,7 +361,12 @@ def construct_rule(params):
     append_param(rule, params['uid_owner'], '--uid-owner', False)
     append_jump(rule, params['reject_with'], 'REJECT')
     append_param(rule, params['reject_with'], '--reject-with', False)
+<<<<<<< HEAD
     append_param(rule, params['icmp_type'], '--icmp_type', False)
+=======
+    append_match(rule, params['ctstatus'],"conntrack")
+    append_csv(rule, params['ctstatus'], '--ctstatus', False)
+>>>>>>> iptables-add-ctstatus
     return rule
 
 
@@ -425,6 +438,7 @@ def main():
             reject_with=dict(required=False, default=None, type='str'),
             position=dict(required=False,default='append',type='str'),
             icmp_type=dict(required=False, default=None, type='str'),
+            ctstatus=dict(required=False, default=[], type='list'),
         ),
         mutually_exclusive=(
             ['set_dscp_mark', 'set_dscp_mark_class'],
