@@ -266,6 +266,12 @@ options:
     description:
       - "Specifies the error packet type to return while rejecting."
     required: false
+  position:
+    version_added: "2.2"
+    description:
+      - "Specifies the position where rule will be added: can be 'append' (default), 'prepend' or line number"
+    required: false
+    default: append
 '''
 
 EXAMPLES = '''
@@ -349,6 +355,8 @@ def push_arguments(iptables_path, action, params):
     cmd = [iptables_path]
     cmd.extend(['-t', params['table']])
     cmd.extend([action, params['chain']])
+    if 'rulenum' in params:
+        cmd.append(params['rulenum'])
     cmd.extend(construct_rule(params))
     return cmd
 
@@ -360,7 +368,17 @@ def check_present(iptables_path, module, params):
 
 
 def append_rule(iptables_path, module, params):
-    cmd = push_arguments(iptables_path, '-A', params)
+    # Append by default
+    action = '-A'
+    position = params['position']
+    
+    if position == 'prepend':
+        action = '-I'
+    elif position.isdigit():
+        action = '-I'
+        params['rulenum'] = position
+
+    cmd = push_arguments(iptables_path, action, params)
     module.run_command(cmd, check_rc=True)
 
 
@@ -399,6 +417,7 @@ def main():
             limit_burst=dict(required=False, default=None, type='str'),
             uid_owner=dict(required=False, default=None, type='str'),
             reject_with=dict(required=False, default=None, type='str'),
+            position=dict(required=False,default='append',type='str'),
         ),
         mutually_exclusive=(
             ['set_dscp_mark', 'set_dscp_mark_class'],
